@@ -20,8 +20,8 @@ class ImageComponent extends Object
     /** @var string Place where all uploaded images will be stored */
     public $uploadPath;
 
-    /** @var string Place where put resized thumbnails */
-    public $resizedPath = '@web/resized';
+    /** @var string Place where to put resized images */
+    public $resizedPath;
 
     /** @var string Base url, from where files can be accessed */
     public $baseUrl;
@@ -44,6 +44,12 @@ class ImageComponent extends Object
     /** @var string $hash Hash salt for directories of resized images */
     public $hashSalt;
 
+    /** @var string Action ID which performs resize of image */
+    public $urlRoute = 'image/resize';
+
+    /** @var string Url prefix */
+    public $urlPrefix = 'resized';
+
     /** @var \Imagine\Imagick\Imagine */
     protected $_imagine;
 
@@ -64,6 +70,11 @@ class ImageComponent extends Object
         // Initialize hash salt
         if ($this->hashSalt === null) {
             $this->hashSalt = gethostname();
+        }
+
+        // Initializes resized images path
+        if($this->resizedPath === null) {
+            $this->resizedPath = '@web/'.$this->urlPrefix;
         }
     }
 
