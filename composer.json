@@ -4,7 +4,7 @@
     "keywords": [
         "yii2",
         "extension",
-        "location"
+        "image"
     ],
     "homepage": "https://github.com/mg-code/yii2-image",
     "type": "yii2-extension",
