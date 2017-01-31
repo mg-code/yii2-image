@@ -44,10 +44,10 @@ class ResizedUrlRule extends Object implements UrlRuleInterface
             // Extract parameters
             $params = [];
             $params['fileName'] = array_pop($explode);
-            $params['id'] = $this->parseImgId($params['fileName']);
             $params['imageHash'] = array_pop($explode);
             $params['type'] = array_shift($explode);
             $params['path'] = implode('/', $explode);
+            $params['id'] = $this->parseImgId($params['fileName']);
 
             return [$component->urlRoute, $params];
         } else {

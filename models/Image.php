@@ -10,4 +10,13 @@ use mgcode\helpers\ActiveRecordHelperTrait;
 class Image extends AbstractImage
 {
     use ActiveRecordHelperTrait;
+
+    /**
+     * Returns resized image url
+     * @param $type
+     */
+    public function getUrl($type)
+    {
+        return \Yii::$app->image->getResizedUrl($type, $this->path, $this->filename);
+    }
 }

@@ -23,9 +23,6 @@ class ImageComponent extends Object
     /** @var string Place where to put resized images */
     public $resizedPath;
 
-    /** @var string Base url, from where files can be accessed */
-    public $baseUrl;
-
     /** @var string Upload path prefix */
     public $pathPrefix;
 
@@ -64,7 +61,6 @@ class ImageComponent extends Object
         // Normalize paths
         $this->pathPrefix = trim($this->pathPrefix, '/');
         $this->uploadPath = rtrim($this->uploadPath, '/');
-        $this->baseUrl = rtrim($this->baseUrl, '/');
         $this->types = Instance::ensure($this->types, ImageType::className());
 
         // Initialize hash salt
@@ -73,9 +69,83 @@ class ImageComponent extends Object
         }
 
         // Initializes resized images path
-        if($this->resizedPath === null) {
-            $this->resizedPath = '@web/'.$this->urlPrefix;
+        if ($this->resizedPath === null) {
+            $this->resizedPath = '@webroot/'.$this->urlPrefix;
         }
+    }
+
+    /**
+     * Returns url for resized image
+     * @param int $type
+     * @param string $path
+     * @param string $fileName
+     * @return string
+     */
+    public function getResizedUrl($type, $path, $fileName)
+    {
+        $hash = $this->getUrlHash($type, $path, $fileName);
+        $parts = [
+            $this->urlPrefix,
+            $type,
+            $path,
+            $hash,
+            $fileName
+        ];
+
+        $url = '/'.implode('/', $parts);
+        return $url;
+    }
+
+    /**
+     * Generates hash for resized image
+     * @param int $type
+     * @param string $path
+     * @param string $fileName
+     * @return string
+     */
+    public function getUrlHash($type, $path, $fileName)
+    {
+        $parts = [$type, $path, $fileName, $this->hashSalt];
+        $hash = md5(print_r($parts, true));
+        $hash = substr($hash, 0, 5);
+        return $hash;
+    }
+
+    /**
+     * Returns resized image destination
+     * @param int $type
+     * @param string $path
+     * @param string $fileName
+     * @return string
+     */
+    public function getResizeDestination($type, $path, $fileName)
+    {
+        $directory = \Yii::getAlias($this->resizedPath);
+        $hash = $this->getUrlHash($type, $path, $fileName);
+        $path = implode('/', [
+            $directory,
+            $type,
+            $path,
+            $hash,
+            $fileName
+        ]);
+        return $path;
+    }
+
+    /**
+     * Resize image to specific type
+     * @param int $type
+     * @param string $path
+     * @param string $fileName
+     * @return bool
+     * @throws \Exception
+     */
+    public function resizeImage($type, $path, $fileName)
+    {
+        $originalFile = $this->getOriginalFile($path, $fileName)['fullPath'];
+        $destination = $this->getResizeDestination($type, $path, $fileName);
+        $parameters = $this->types->getParams($type);
+        return $this->resizeImageByParameters($originalFile, $destination, $parameters);
     }
 
     /**
@@ -226,7 +296,7 @@ class ImageComponent extends Object
     {
         // Parameters
         $parameters = $this->types->getOriginalParams();
-        return $this->resizeImage($source, $source, $parameters);
+        return $this->resizeImageByParameters($source, $source, $parameters);
     }
 
     /**
@@ -238,7 +308,7 @@ class ImageComponent extends Object
      * @throws InvalidConfigException
      * @throws \Exception
      */
-    protected function resizeImage($source, $destination, $parameters)
+    protected function resizeImageByParameters($source, $destination, $parameters)
     {
         if (!$source || !file_exists($source)) {
             throw new \Exception('Source image not found.');
@@ -265,6 +335,11 @@ class ImageComponent extends Object
         else {
             $imagine->interlace(ImagineInterface::INTERLACE_LINE);
             $this->resizeLayer($imagine, $parameters);
+        }
+
+        $directory = dirname($destination);
+        if (!file_exists($directory)) {
+            FileHelper::createDirectory($directory);
         }
 
         // Save image
@@ -353,7 +428,7 @@ class ImageComponent extends Object
      * @param $fileName
      * @return array
      */
-    protected function getOriginalFile($path, $fileName)
+    public function getOriginalFile($path, $fileName)
     {
         $directory = Yii::getAlias($this->uploadPath.'/'.$path);
         $fullPath = $directory.'/'.$fileName;
