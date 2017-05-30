@@ -328,12 +328,12 @@ class ImageComponent extends Object
             $options['animated'] = true;
             $imagine->layers()->coalesce();
             foreach ($imagine->layers() as $frame) {
-                $frame->interlace(ImagineInterface::INTERLACE_LINE);
+                $frame->interlace(ImagineInterface::INTERLACE_PLANE);
                 $this->resizeLayer($frame, $parameters);
             }
         } // Standard image
         else {
-            $imagine->interlace(ImagineInterface::INTERLACE_LINE);
+            $imagine->interlace(ImagineInterface::INTERLACE_PLANE);
             $this->resizeLayer($imagine, $parameters);
         }
 
