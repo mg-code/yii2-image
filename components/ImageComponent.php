@@ -222,6 +222,7 @@ class ImageComponent extends Object
     {
         $f = finfo_open();
         $mimeType = finfo_buffer($f, base64_decode($data), FILEINFO_MIME_TYPE);
+        unset($f);
         if (!$mimeType || !$this->isMimeTypeValid($mimeType)) {
             throw new \Exception('Wrong mime type. Given: '.$mimeType);
         }
@@ -231,6 +232,7 @@ class ImageComponent extends Object
         stream_filter_append($fh, 'convert.base64-decode', STREAM_FILTER_WRITE);
         $size = fwrite($fh, $data);
         fclose($fh);
+        unset($fh);
 
         if ($size === false) {
             throw new \Exception('Failed to write image. Path:'.$tempLocation);
