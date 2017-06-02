@@ -105,7 +105,14 @@ class ImageComponent extends Object
      */
     public function getUrlHash($type, $path, $fileName)
     {
-        $parts = [$type, $path, $fileName, $this->hashSalt];
+        $parts = [
+            $type, 
+            $this->types->exist($type) ? $this->types->getTypeHash($type) : '',
+            $path, 
+            $fileName, 
+            $this->hashSalt,
+        ];
+        
         $hash = md5(print_r($parts, true));
         $hash = substr($hash, 0, 5);
         return $hash;
@@ -337,6 +344,11 @@ class ImageComponent extends Object
         else {
             $imagine->interlace(ImagineInterface::INTERLACE_PLANE);
             $this->resizeLayer($imagine, $parameters);
+        }
+
+        if(isset($parameters[ImageType::PARAM_BLUR])) {
+            $blur = (int) $parameters[ImageType::PARAM_BLUR];
+            $imagine->effects()->blur($blur);
         }
 
         $directory = dirname($destination);

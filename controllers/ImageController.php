@@ -28,7 +28,7 @@ class ImageController extends Controller
         $path = (string) $path;
 
         // Validate request
-        if ($imageHash != $component->getUrlHash($type, $path, $fileName) || !$component->types->exist($type)) {
+        if (!$component->types->exist($type) || $imageHash != $component->getUrlHash($type, $path, $fileName)) {
             throw new NotFoundHttpException();
         }
         $originalFile = $component->getOriginalFile($path, $fileName);

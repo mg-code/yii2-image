@@ -14,6 +14,7 @@ class ImageType extends \yii\base\Object
     const PARAM_HEIGHT = 'height';
     const PARAM_JPEG_QUALITY = 'jpeg_quality';
     const PARAM_RATIO = 'ratio';
+    const PARAM_BLUR = 'blur';
 
     const RATIO_MIN = 'min'; // any of sides is not larger than specified
     const RATIO_MAX = 'max'; // any of sides is smaller larger than specified (Images are not zoomed in)
@@ -47,6 +48,8 @@ class ImageType extends \yii\base\Object
             self::PARAM_RATIO => self::RATIO_MAX,
         ],
     ];
+
+    private $_typeHashes = [];
 
     /**
      * Returns list of types
@@ -93,5 +96,19 @@ class ImageType extends \yii\base\Object
     public function exist($type)
     {
         return array_key_exists($type, $this->params);
+    }
+
+    /**
+     * Returns type hash
+     * @param $type
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getTypeHash($type)
+    {
+        if (!array_key_exists($type, $this->_typeHashes)) {
+            $this->_typeHashes[$type] = md5(print_r($this->getParams($type), true));
+        }
+        return $this->_typeHashes[$type];
     }
 }
