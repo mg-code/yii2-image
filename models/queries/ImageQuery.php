@@ -9,7 +9,6 @@ namespace mgcode\image\models\queries;
  */
 class ImageQuery extends \yii\db\ActiveQuery
 {
-
     /**
      * @inheritdoc
      * @return \mgcode\image\models\Image[]|array

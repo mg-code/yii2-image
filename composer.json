@@ -1,10 +1,13 @@
 {
     "name": "mg-code/yii2-image",
-    "description": "Image",
+    "description": "Image package that supports almost anything...",
     "keywords": [
         "yii2",
         "extension",
-        "image"
+        "image",
+        "resize",
+        "fly",
+        "nginx"
     ],
     "homepage": "https://github.com/mg-code/yii2-image",
     "type": "yii2-extension",
@@ -18,9 +21,10 @@
     "minimum-stability": "dev",
     "require": {
         "ext-imagick": "*",
-        "yiisoft/yii2": "*",
+        "yiisoft/yii2": ">=2.0.13",
         "yiisoft/yii2-httpclient": "*",
         "imagine/imagine": "0.7.*",
+        "creocoder/yii2-flysystem": "0.9.*",
         "mg-code/yii2-helpers": "*"
     },
     "autoload": {
