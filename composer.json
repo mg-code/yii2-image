@@ -20,7 +20,7 @@
         "ext-imagick": "*",
         "yiisoft/yii2": "*",
         "yiisoft/yii2-httpclient": "*",
-        "imagine/imagine": "0.6.*",
+        "imagine/imagine": "0.7.*",
         "mg-code/yii2-helpers": "*"
     },
     "autoload": {
